@@ -2,9 +2,48 @@ import 'package:alarming_system_mobile_app/pages/home_page.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 import 'login_page.dart';
+final FirebaseAuth _auth = FirebaseAuth.instance;
+final GoogleSignIn googleSignIn = GoogleSignIn();
 
+Future<String> signInWithGoogle() async {
+  await Firebase.initializeApp();
+
+  final GoogleSignInAccount googleSignInAccount = await googleSignIn.signIn();
+  final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount.authentication;
+
+  final AuthCredential credential = GoogleAuthProvider.credential(
+    accessToken: googleSignInAuthentication.accessToken,
+    idToken: googleSignInAuthentication.idToken,
+  );
+
+  final UserCredential authResult = await _auth.signInWithCredential(credential);
+  final User user = authResult.user;
+
+  if (user != null) {
+    assert(!user.isAnonymous);
+    assert(await user.getIdToken() != null);
+
+    final User currentUser = _auth.currentUser;
+    assert(user.uid == currentUser.uid);
+
+    print('signInWithGoogle succeeded: $user');
+
+    return '$user';
+  }
+
+  return null;
+}
+
+Future<void> signOutGoogle() async {
+  await googleSignIn.signOut();
+
+  print("User Signed Out");
+}
 class RegisterPage extends StatefulWidget {
   @override
   _RegisterPageState createState() => _RegisterPageState();
@@ -24,7 +63,9 @@ class _RegisterPageState extends State<RegisterPage> {
       appBar: AppBar(
         title: Text('Register'),
         elevation: 0,
-        backgroundColor: Theme.of(context).brightness!=Brightness.dark?Color(0xFF6770D2):Colors.grey[900],
+        backgroundColor: Theme.of(context).brightness != Brightness.dark
+            ? Color(0xFF6770D2)
+            : Colors.grey[900],
         centerTitle: true,
       ),
       body: Form(
@@ -36,10 +77,10 @@ class _RegisterPageState extends State<RegisterPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Center(
-                  child: Text(
-                    'Please enter the following details',
-                    style: TextStyle(height: 14, letterSpacing: 0.5),
-                  ),
+                child: Text(
+                  'Please enter the following details',
+                  style: TextStyle(height: 14, letterSpacing: 0.5),
+                ),
               ),
               Container(
                 width: MediaQuery.of(context).size.width / 1.15,
@@ -268,15 +309,13 @@ class _RegisterPageState extends State<RegisterPage> {
                       _removeKeyboard(context);
                       if (_passwordController.text ==
                           _confirmPasswordController.text) {
-                        setDetailsUser(
-                            _nameController.text,
-                            _emailController.text,
-                            _passwordController.text);
+                        setDetailsUser(_nameController.text,
+                            _emailController.text, _passwordController.text);
                       } else {
                         Flushbar(
                           title: "Password Issue",
                           message:
-                          "Please Ensure Your Password and Confirmed Password are the same.",
+                              "Please Ensure Your Password and Confirmed Password are the same.",
                           duration: Duration(seconds: 3),
                         )..show(context);
                       }
@@ -285,22 +324,28 @@ class _RegisterPageState extends State<RegisterPage> {
                   color: Color(0xFF6770D2),
                 ),
               ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text('OR'),
+              ),
+              _signInWithGoogleButton()
             ],
           ),
         ),
       ),
     );
   }
+
   Widget horizontalLine(BuildContext context) => Padding(
-    padding: EdgeInsets.symmetric(horizontal: 8),
-    child: Container(
-      width: 4,
-      height: 1,
-      color: Theme.of(context).brightness == Brightness.dark
-          ? Colors.white
-          : Colors.black12.withOpacity(1),
-    ),
-  );
+        padding: EdgeInsets.symmetric(horizontal: 8),
+        child: Container(
+          width: 4,
+          height: 1,
+          color: Theme.of(context).brightness == Brightness.dark
+              ? Colors.white
+              : Colors.black12.withOpacity(1),
+        ),
+      );
   _removeKeyboard(BuildContext context) {
     FocusScopeNode currentFocus = FocusScope.of(context);
 
@@ -308,8 +353,8 @@ class _RegisterPageState extends State<RegisterPage> {
       currentFocus.unfocus();
     }
   }
-  void setDetailsUser(
-      String name, String email, String password) async {
+
+  void setDetailsUser(String name, String email, String password) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('user_name', name);
     await prefs.setString('user_password', password);
@@ -320,4 +365,45 @@ class _RegisterPageState extends State<RegisterPage> {
         context, MaterialPageRoute(builder: (context) => HomePage()));
   }
 
+  Widget _signInWithGoogleButton() {
+    return OutlineButton(
+      splashColor: Colors.grey,
+      onPressed: () {
+        signInWithGoogle().then((result) {
+          if (result != null) {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) {
+                  return HomePage();
+                },
+              ),
+            );
+          }
+        });
+      },
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
+      highlightElevation: 0,
+      borderSide: BorderSide(color: Colors.grey),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Image(image: AssetImage("assets/google_logo.png"), height: 35.0),
+            Padding(
+              padding: const EdgeInsets.only(left: 10),
+              child: Text(
+                'Sign in with Google',
+                style: TextStyle(
+                  fontSize: 20,
+                  color: Colors.grey,
+                ),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
 }

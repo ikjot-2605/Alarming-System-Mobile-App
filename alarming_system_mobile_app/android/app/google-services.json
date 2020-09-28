@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "442244054051",
+    "firebase_url": "https://dsc-tasks.firebaseio.com",
+    "project_id": "dsc-tasks",
+    "storage_bucket": "dsc-tasks.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:442244054051:android:fcfaebbd9931d4b00a0596",
+        "android_client_info": {
+          "package_name": "com.example.alarming_system_mobile_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "442244054051-mcrerq86fpln228bks1v8p4t57dd5b75.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.alarming_system_mobile_app",
+            "certificate_hash": "66302fde4a01da2d9d2cd91d69381c85cff24a6f"
+          }
+        },
+        {
+          "client_id": "442244054051-ek5c9jg7b2b0h00aonjm6sjptd0pdii8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB35yMitoYvkZIpWZU4yKdTcy69cxuAErU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "442244054051-ek5c9jg7b2b0h00aonjm6sjptd0pdii8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
