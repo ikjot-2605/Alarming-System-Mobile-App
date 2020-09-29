@@ -42,6 +42,10 @@ void storeDetailsInHive(String name, String email,String phone,String photoUrl,b
   var users = await Hive.openBox('users');
   AppUser user = new AppUser(name:name,email:email,imageUrl:photoUrl,phoneNumber:phone,googleLoggedIn:googleLoggedIn);
   users.add(user);
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  await prefs.setString('user_name', name);
+  await prefs.setString('user_email', email);
+  await prefs.setString('user_phone', phone);
   print(users.getAt(0).name);
   print(users.getAt(0).imageUrl);
   print(users.getAt(0).email);
