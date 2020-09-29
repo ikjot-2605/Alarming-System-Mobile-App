@@ -1,12 +1,13 @@
 import 'package:alarming_system_mobile_app/pages/home_page.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import '../model/AppUser.dart';
 
-import 'login_page.dart';
 final FirebaseAuth _auth = FirebaseAuth.instance;
 final GoogleSignIn googleSignIn = GoogleSignIn();
 
@@ -27,16 +28,25 @@ Future<String> signInWithGoogle() async {
   if (user != null) {
     assert(!user.isAnonymous);
     assert(await user.getIdToken() != null);
-
     final User currentUser = _auth.currentUser;
     assert(user.uid == currentUser.uid);
-
     print('signInWithGoogle succeeded: $user');
-
+    storeDetailsInHive(user.displayName,user.email,user.phoneNumber,user.photoURL,true);
     return '$user';
   }
 
   return null;
+}
+
+void storeDetailsInHive(String name, String email,String phone,String photoUrl,bool googleLoggedIn)async{
+  var users = await Hive.openBox('users');
+  AppUser user = new AppUser(name:name,email:email,imageUrl:photoUrl,phoneNumber:phone,googleLoggedIn:googleLoggedIn);
+  users.add(user);
+  print(users.getAt(0).name);
+  print(users.getAt(0).imageUrl);
+  print(users.getAt(0).email);
+  print(users.getAt(0).phoneNumber);
+  print(users.getAt(0).googleLoggedIn);
 }
 
 Future<void> signOutGoogle() async {
@@ -51,9 +61,8 @@ class RegisterPage extends StatefulWidget {
 
 class _RegisterPageState extends State<RegisterPage> {
   final _nameController = TextEditingController();
-  final _passwordController = TextEditingController();
   final _emailController = TextEditingController();
-  final _confirmPasswordController = TextEditingController();
+  final _phoneController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool _autovalidate = false;
   bool obscure = true;
@@ -177,79 +186,18 @@ class _RegisterPageState extends State<RegisterPage> {
                   autocorrect: false,
                 ),
               ),
-              const SizedBox(height: 12),
-              Container(
-                width: MediaQuery.of(context).size.width / 1.15,
-                child: TextFormField(
-                  controller: _passwordController,
-                  obscureText: obscure,
-                  validator: (value) {
-                    _autovalidate = true;
-                    if (value.isEmpty) {
-                      return 'This field cannot be empty';
-                    }
-                    return null;
-                  },
-                  // controller: passwordController,
-                  decoration: InputDecoration(
-                    focusedErrorBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5.0),
-                      borderSide: BorderSide(color: Colors.red),
-                    ),
-                    errorBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5.0),
-                      borderSide: BorderSide(
-                        color: Colors.red,
-                      ),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5.0),
-                      borderSide: BorderSide(
-                        color: Color(0xFF6770D2),
-                      ),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5.0),
-                      borderSide: BorderSide(
-                        color: Theme.of(context).brightness == Brightness.dark
-                            ? Colors.grey[500]
-                            : Color(0xffDCDCDC),
-                        width: 2,
-                      ),
-                    ),
-                    labelStyle: TextStyle(
-                        color: Theme.of(context).brightness == Brightness.dark
-                            ? Colors.white
-                            : Color(0xFF767676),
-                        fontSize: 14),
-                    labelText: 'Password',
-                    suffixIcon: IconButton(
-                      icon: Icon(Icons.visibility),
-                      padding: EdgeInsets.all(0),
-                      onPressed: () {
-                        setState(() {
-                          obscure = !obscure;
-                        });
-                      },
-                    ),
-                  ),
-                  autocorrect: false,
-                ),
-              ),
               const SizedBox(height: 16),
               Container(
                 width: MediaQuery.of(context).size.width / 1.15,
                 child: TextFormField(
-                  controller: _confirmPasswordController,
-                  obscureText: obscure,
+                  controller: _phoneController,
                   validator: (value) {
-                    _autovalidate = true;
                     if (value.isEmpty) {
+                      _autovalidate = true;
                       return 'This field cannot be empty';
                     }
                     return null;
                   },
-                  // controller: passwordController,
                   decoration: InputDecoration(
                     focusedErrorBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(5.0),
@@ -276,21 +224,12 @@ class _RegisterPageState extends State<RegisterPage> {
                         width: 2,
                       ),
                     ),
+                    labelText: 'Phone',
                     labelStyle: TextStyle(
                         color: Theme.of(context).brightness == Brightness.dark
                             ? Colors.white
                             : Color(0xFF767676),
                         fontSize: 14),
-                    labelText: 'Confirm Password',
-                    suffixIcon: IconButton(
-                      icon: Icon(Icons.visibility),
-                      padding: EdgeInsets.all(0),
-                      onPressed: () {
-                        setState(() {
-                          obscure = !obscure;
-                        });
-                      },
-                    ),
                   ),
                   autocorrect: false,
                 ),
@@ -307,18 +246,8 @@ class _RegisterPageState extends State<RegisterPage> {
                   onPressed: () {
                     if (_formKey.currentState.validate()) {
                       _removeKeyboard(context);
-                      if (_passwordController.text ==
-                          _confirmPasswordController.text) {
-                        setDetailsUser(_nameController.text,
-                            _emailController.text, _passwordController.text);
-                      } else {
-                        Flushbar(
-                          title: "Password Issue",
-                          message:
-                              "Please Ensure Your Password and Confirmed Password are the same.",
-                          duration: Duration(seconds: 3),
-                        )..show(context);
-                      }
+                      setDetailsUser(_nameController.text,
+                          _emailController.text,_phoneController.text);
                     }
                   },
                   color: Color(0xFF6770D2),
@@ -354,17 +283,17 @@ class _RegisterPageState extends State<RegisterPage> {
     }
   }
 
-  void setDetailsUser(String name, String email, String password) async {
+  void setDetailsUser(String name, String email,String phone) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('user_name', name);
-    await prefs.setString('user_password', password);
     await prefs.setString('user_email', email);
+    await prefs.setString('user_phone', phone);
     String nameFound = prefs.getString('user_name');
     print(nameFound);
+    storeDetailsInHive(name, email, phone,'https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png',false);
     Navigator.push(
         context, MaterialPageRoute(builder: (context) => HomePage()));
   }
-
   Widget _signInWithGoogleButton() {
     return OutlineButton(
       splashColor: Colors.grey,

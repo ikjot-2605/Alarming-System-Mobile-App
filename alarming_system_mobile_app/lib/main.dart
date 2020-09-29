@@ -1,9 +1,14 @@
-import 'package:alarming_system_mobile_app/pages/login_page.dart';
+import 'package:alarming_system_mobile_app/model/AppUser.dart';
+import 'package:alarming_system_mobile_app/pages/home_page.dart';
 import 'package:alarming_system_mobile_app/pages/register_page.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
+void main() async{
+  Hive.registerAdapter(AppUserAdapter());
+  await Hive.initFlutter();
   runApp(MyApp());
 }
 
@@ -58,7 +63,7 @@ class _MyHomePageState extends State<MyHomePage> {
           if (snapshot.data == null) {
             return RegisterPage();
           } else {
-            return LoginPage(snapshot.data);
+            return HomePage();
           }
         } else if (snapshot.hasError) {
           return RegisterPage();

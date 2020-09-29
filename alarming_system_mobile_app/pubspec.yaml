@@ -33,10 +33,14 @@ dependencies:
   firebase_core: ^0.5.0
   firebase_auth: ^0.18.0+1
   google_sign_in: ^4.5.4
+  hive: ^1.4.4
+  hive_flutter: ^0.3.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  hive_generator: any
+  build_runner: any
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
