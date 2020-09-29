@@ -160,7 +160,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                   ListTile(
                     onTap: () async{
-                      if(Permission.contacts.isUndetermined==true||Permission.contacts.isDenied==true)var status = await Permission.contacts.request();
+                      if(!((await Permission.contacts.isGranted)==true))await Permission.contacts.request();
                       Navigator.push(context, MaterialPageRoute(builder: (context)=>SelectEmergencyContactsPage()));
                     },
                     leading: Icon(Icons.contacts),
