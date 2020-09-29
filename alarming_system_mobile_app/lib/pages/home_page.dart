@@ -1,4 +1,5 @@
 import 'package:alarming_system_mobile_app/model/AppUser.dart';
+import 'package:alarming_system_mobile_app/pages/draft_message_page.dart';
 import 'package:alarming_system_mobile_app/pages/error_page.dart';
 import 'package:alarming_system_mobile_app/pages/register_page.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -147,6 +148,13 @@ class _HomePageState extends State<HomePage> {
                     },
                     leading: Icon(Icons.exit_to_app),
                     title: Text('Logout'),
+                  ),
+                  ListTile(
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context)=>DraftMessagePage()));
+                    },
+                    leading: Icon(Icons.message),
+                    title: Text('Modify Emergency Message'),
                   ),
                 ],
               ),
