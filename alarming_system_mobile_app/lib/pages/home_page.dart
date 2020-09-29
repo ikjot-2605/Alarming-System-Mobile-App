@@ -4,6 +4,7 @@ import 'package:alarming_system_mobile_app/pages/register_page.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -11,10 +12,36 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  AppUser user;
+  Future<void> signOut(bool google) async {
+    if(google){
+      await googleSignIn.signOut();
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.clear();
+      Hive.box('users').clear();
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context)=>RegisterPage()
+        )
+      );
+    }
+    else{
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.clear();
+      Hive.box('users').clear();
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context)=>RegisterPage()
+          )
+      );
+    }
+    print("User Signed Out");
+  }
   @override
   void initState() {
     getUserFromHive();
+    super.initState();
   }
 
   @override
@@ -87,6 +114,13 @@ class _HomePageState extends State<HomePage> {
                   ListTile(
                     leading: Icon(Icons.settings),
                     title: Text('Settings'),
+                  ),
+                  ListTile(
+                    onTap: (){
+                      signOut(snapshot.data.googleLoggedIn);
+                    },
+                    leading: Icon(Icons.exit_to_app),
+                    title: Text('Logout'),
                   ),
                 ],
               ),
