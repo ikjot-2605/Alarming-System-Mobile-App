@@ -2,10 +2,12 @@ import 'package:alarming_system_mobile_app/model/AppUser.dart';
 import 'package:alarming_system_mobile_app/pages/draft_message_page.dart';
 import 'package:alarming_system_mobile_app/pages/error_page.dart';
 import 'package:alarming_system_mobile_app/pages/register_page.dart';
+import 'package:alarming_system_mobile_app/pages/select_emergency_contacts.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:hive/hive.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
@@ -150,11 +152,19 @@ class _HomePageState extends State<HomePage> {
                     title: Text('Logout'),
                   ),
                   ListTile(
-                    onTap: () {
+                    onTap: () async{
                       Navigator.push(context, MaterialPageRoute(builder: (context)=>DraftMessagePage()));
                     },
                     leading: Icon(Icons.message),
                     title: Text('Modify Emergency Message'),
+                  ),
+                  ListTile(
+                    onTap: () async{
+                      if(Permission.contacts.isUndetermined==true||Permission.contacts.isDenied==true)var status = await Permission.contacts.request();
+                      Navigator.push(context, MaterialPageRoute(builder: (context)=>SelectEmergencyContactsPage()));
+                    },
+                    leading: Icon(Icons.contacts),
+                    title: Text('Modify Emergency Contacts'),
                   ),
                 ],
               ),
