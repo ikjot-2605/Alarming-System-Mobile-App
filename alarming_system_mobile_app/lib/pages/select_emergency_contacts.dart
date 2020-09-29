@@ -147,7 +147,7 @@ class _SelectEmergencyContactsPageState extends State<SelectEmergencyContactsPag
   void searchOp(String searchQuery,List<Contact> contactsList) {
     List<Contact> list = [];
     for (int i = 0; i < contactsList.length; i++) {
-      if (contactsList[i].displayName
+      if (contactsList[i].displayName!=null&&contactsList[i].displayName!=""&&contactsList[i].displayName
           .toLowerCase()
           .contains(searchQuery.toLowerCase())) {
         list.add(contactsList[i]);
