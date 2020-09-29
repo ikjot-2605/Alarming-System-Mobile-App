@@ -36,6 +36,7 @@ dependencies:
   hive: ^1.4.4
   hive_flutter: ^0.3.1
   cached_network_image: ^2.3.2+1
+  geolocator: ^5.3.1
 
 dev_dependencies:
   flutter_test:
