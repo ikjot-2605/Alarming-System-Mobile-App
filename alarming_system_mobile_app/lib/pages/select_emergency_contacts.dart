@@ -15,7 +15,7 @@ class SelectEmergencyContactsPage extends StatefulWidget {
 
 class _SelectEmergencyContactsPageState
     extends State<SelectEmergencyContactsPage> {
-  Set selectedElements = new Set();
+  Set<Contact> selectedElements = new Set();
   ValueNotifier<bool> isSearching = ValueNotifier<bool>(false);
   ValueNotifier<List> contacts = ValueNotifier<List>([]);
   TextEditingController searchTextController = TextEditingController();
@@ -121,17 +121,17 @@ class _SelectEmergencyContactsPageState
     return InkWell(
       onTap: () {
         setState(() {
-          if (!selectedElements.contains(index))
-            selectedElements.add(index);
+          if (!selectedElements.contains(contact))
+            selectedElements.add(contact);
           else {
-            selectedElements.remove(index);
+            selectedElements.remove(contact);
           }
         });
       },
       child: Container(
         height: 52,
         decoration: BoxDecoration(
-          color: (selectedElements.contains(index))
+          color: (selectedElements.contains(contact))
               ? Colors.grey[200]
               : Colors.transparent,
           border: Border.symmetric(
@@ -159,7 +159,7 @@ class _SelectEmergencyContactsPageState
                           ),
                         ),
                       ),
-                      (selectedElements.contains(index))
+                      (selectedElements.contains(contact))
                           ? Icon(Icons.check)
                           : Container(),
                     ],
@@ -174,7 +174,7 @@ class _SelectEmergencyContactsPageState
                           ),
                         ),
                       ),
-                      (selectedElements.contains(index))
+                      (selectedElements.contains(contact))
                           ? Icon(Icons.check)
                           : Container(),
                     ],
