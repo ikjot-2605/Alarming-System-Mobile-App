@@ -26,7 +26,7 @@ class _SelectEmergencyContactsPageState
   @override
   void initState(){
     getContactsFromHive();
-    contacts.value = widget.contactList;
+    contacts.value=widget.contactList;
   }
   @override
   void dispose() {
@@ -144,7 +144,7 @@ class _SelectEmergencyContactsPageState
           }
         });
       },
-      child: Container(
+      child: contact.displayName!=null?Container(
         height: 52,
         decoration: BoxDecoration(
           color: (selectedElements.contains(contact))
@@ -164,8 +164,7 @@ class _SelectEmergencyContactsPageState
               0,
               16,
             ),
-            child: contact.displayName != null
-                ? Row(
+            child:Row(
                     children: [
                       Expanded(
                         child: Text(
@@ -180,22 +179,8 @@ class _SelectEmergencyContactsPageState
                           : Container(),
                     ],
                   )
-                : Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          'Name not specified',
-                          style: TextStyle(
-                            fontSize: 14,
-                          ),
-                        ),
-                      ),
-                      (selectedElements.contains(contact))
-                          ? Icon(Icons.check)
-                          : Container(),
-                    ],
-                  )),
-      ),
+        ),
+      ):Container(),
     );
   }
 
