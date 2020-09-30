@@ -1,4 +1,5 @@
 import 'package:alarming_system_mobile_app/model/AppUser.dart';
+import 'package:alarming_system_mobile_app/model/UserContact.dart';
 import 'package:alarming_system_mobile_app/pages/home_page.dart';
 import 'package:alarming_system_mobile_app/pages/register_page.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async{
   Hive.registerAdapter(AppUserAdapter());
+  Hive.registerAdapter(UserContactAdapter());
   await Hive.initFlutter();
   runApp(MyApp());
 }

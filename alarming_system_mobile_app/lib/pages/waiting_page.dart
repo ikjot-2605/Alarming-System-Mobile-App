@@ -1,3 +1,4 @@
+import 'package:alarming_system_mobile_app/model/UserContact.dart';
 import 'package:alarming_system_mobile_app/pages/select_emergency_contacts.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -38,8 +39,23 @@ class _WaitingPageState extends State<WaitingPage> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Scaffold(body: Center(child: CircularProgressIndicator()));
         } else if (snapshot.hasData) {
-          contacts.value= snapshot.data;
-          return SelectEmergencyContactsPage(snapshot.data);
+          List<UserContact> contactList=[];
+          for(int i=0;i<snapshot.data.length;i++){
+            UserContact userContact = new UserContact();
+            userContact.displayName=snapshot.data[i].displayName;
+            List<String> phones=[];
+            for(int j=0;j<snapshot.data[i].phones.length;j++){
+              phones.add(snapshot.data[i].phones.elementAt(j).value);
+            }
+            userContact.phones=phones;
+            List<String> emails=[];
+            for(int j=0;j<snapshot.data[i].emails.length;j++){
+              phones.add(snapshot.data[i].emails.elementAt(j).value);
+            }
+            userContact.emails=emails;
+            contactList.add(userContact);
+          }
+          return SelectEmergencyContactsPage(contactList);
         } else if (snapshot.hasError) {
           return ErrorPage();
         } else if (snapshot.data == null) {

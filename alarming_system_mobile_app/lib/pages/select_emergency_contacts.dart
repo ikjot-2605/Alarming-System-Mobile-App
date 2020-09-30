@@ -1,11 +1,14 @@
+import 'package:alarming_system_mobile_app/model/UserContact.dart';
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:contacts_service/contacts_service.dart';
+import 'package:hive/hive.dart';
 
 import 'error_page.dart';
 
 class SelectEmergencyContactsPage extends StatefulWidget {
-  final List<Contact> contactList;
+  final List<UserContact> contactList;
 
   SelectEmergencyContactsPage(this.contactList, {Key key}) : super(key: key);
   @override
@@ -15,12 +18,16 @@ class SelectEmergencyContactsPage extends StatefulWidget {
 
 class _SelectEmergencyContactsPageState
     extends State<SelectEmergencyContactsPage> {
-  Set<Contact> selectedElements = new Set();
+  Set<UserContact> selectedElements = new Set();
   ValueNotifier<bool> isSearching = ValueNotifier<bool>(false);
   ValueNotifier<List> contacts = ValueNotifier<List>([]);
   TextEditingController searchTextController = TextEditingController();
-  List<Contact> searchResults;
-
+  List<UserContact> searchResults;
+  @override
+  void initState(){
+    getContactsFromHive();
+    contacts.value = widget.contactList;
+  }
   @override
   void dispose() {
     super.dispose();
@@ -32,7 +39,16 @@ class _SelectEmergencyContactsPageState
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: (selectedElements.length != 0)
-          ? FloatingActionButton(onPressed: () {},child: Icon(Icons.check),)
+          ? FloatingActionButton(
+        onPressed: () {
+          List<UserContact> contactList =[];
+          for(int i=0;i<selectedElements.length;i++){
+            contactList.add(selectedElements.elementAt(i));
+          }
+          storeDetailsInHive(contactList);
+        },
+        child: Icon(Icons.check),
+      )
           : Container(),
       appBar: AppBar(
         backgroundColor: Theme.of(context).brightness == Brightness.dark
@@ -86,7 +102,7 @@ class _SelectEmergencyContactsPageState
               12,
             ),
             child: Text(
-              'Choose Contact',
+              'Choose UserContact',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
@@ -117,7 +133,7 @@ class _SelectEmergencyContactsPageState
     );
   }
 
-  Widget card(Contact contact, int index) {
+  Widget card(UserContact contact, int index) {
     return InkWell(
       onTap: () {
         setState(() {
@@ -183,8 +199,8 @@ class _SelectEmergencyContactsPageState
     );
   }
 
-  void searchOp(String searchQuery, List<Contact> contactsList) {
-    List<Contact> list = [];
+  void searchOp(String searchQuery, List<UserContact> contactsList) {
+    List<UserContact> list = [];
     for (int i = 0; i < contactsList.length; i++) {
       if (contactsList[i].displayName != null &&
           contactsList[i].displayName != "" &&
@@ -197,10 +213,25 @@ class _SelectEmergencyContactsPageState
     }
     contacts.value = list;
   }
-
-  Future<List<Contact>> getContacts() async {
-    Iterable<Contact> contacts = await ContactsService.getContacts();
-    List<Contact> contactsList = contacts.toList();
-    return contactsList;
+  void getContactsFromHive() async {
+    var contacts = await Hive.openBox('contacts');
+    for(int i=0;i<contacts.length;i++){
+      selectedElements.add(contacts.getAt(i));
+    }
+  }
+  void storeDetailsInHive(List<UserContact> contactList)async{
+    var contacts = await Hive.openBox('contacts');
+    while(contacts.length>0){
+      contacts.deleteAt(0);
+    }
+    for(int i=0;i<contactList.length;i++){
+      contacts.add(contactList[i]);
+    }
+    Navigator.pop(context);
+    Flushbar(
+      title:  "Success",
+      message:  "Your contacts were saved successfully",
+      duration:  Duration(seconds: 3),
+    )..show(context);
   }
 }
