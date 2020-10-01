@@ -32,7 +32,8 @@ class _DraftMessagePageState extends State<DraftMessagePage> {
               ),
               FutureBuilder<String>(
                 future: getMessageFromHive(),
-                builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+                builder:
+                    (BuildContext context, AsyncSnapshot<String> snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Center(
                       child: CircularProgressIndicator(),
@@ -103,14 +104,15 @@ class _DraftMessagePageState extends State<DraftMessagePage> {
                     textColor: Colors.white,
                     child: Text("Save Message"),
                     onPressed: () {
-                      if(_messageController.text==""||_messageController.text==null){
+                      if (_messageController.text == "" ||
+                          _messageController.text == null) {
                         Flushbar(
-                          title:  "Error",
-                          message:  "Please ensure you enter a valid message containing more than zero characters",
-                          duration:  Duration(seconds: 3),
+                          title: "Error",
+                          message:
+                              "Please ensure you enter a valid message containing more than zero characters",
+                          duration: Duration(seconds: 3),
                         )..show(context);
-                      }
-                      else{
+                      } else {
                         storeDetailsInHive(_messageController.text);
                       }
                     },
@@ -128,15 +130,16 @@ class _DraftMessagePageState extends State<DraftMessagePage> {
     print(message.getAt(0));
     return message.getAt(0);
   }
-  void storeDetailsInHive(String message)async{
+
+  void storeDetailsInHive(String message) async {
     var messages = await Hive.openBox('message');
-    messages.deleteAt(0);
+    if (messages.length > 0) messages.deleteAt(0);
     messages.add(message);
     Navigator.pop(context);
     Flushbar(
-      title:  "Success",
-      message:  "Your message was saved successfully",
-      duration:  Duration(seconds: 3),
+      title: "Success",
+      message: "Your message was saved successfully",
+      duration: Duration(seconds: 3),
     )..show(context);
   }
 }
