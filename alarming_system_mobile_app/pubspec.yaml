@@ -40,6 +40,7 @@ dependencies:
   contacts_service: ^0.4.6
   permission_handler: ^5.0.1+1
   equatable: ^1.2.3
+  flutter_sms: 2.0.0+2 
 
 dev_dependencies:
   flutter_test:

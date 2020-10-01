@@ -6,6 +6,7 @@ import 'package:alarming_system_mobile_app/pages/select_emergency_contacts.dart'
 import 'package:alarming_system_mobile_app/pages/waiting_page.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_sms/flutter_sms.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:hive/hive.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -153,16 +154,23 @@ class _HomePageState extends State<HomePage> {
                     title: Text('Logout'),
                   ),
                   ListTile(
-                    onTap: () async{
-                      Navigator.push(context, MaterialPageRoute(builder: (context)=>DraftMessagePage()));
+                    onTap: () async {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => DraftMessagePage()));
                     },
                     leading: Icon(Icons.message),
                     title: Text('Modify Emergency Message'),
                   ),
                   ListTile(
-                    onTap: () async{
-                      if(!((await Permission.contacts.isGranted)==true))await Permission.contacts.request();
-                      Navigator.push(context, MaterialPageRoute(builder: (context)=>WaitingPage()));
+                    onTap: () async {
+                      if (!((await Permission.contacts.isGranted) == true))
+                        await Permission.contacts.request();
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => WaitingPage()));
                     },
                     leading: Icon(Icons.contacts),
                     title: Text('Modify Emergency Contacts'),
@@ -209,6 +217,14 @@ class _HomePageState extends State<HomePage> {
                     ],
                   ),
                 ),
+                Expanded(
+                  child: FlatButton(
+                    child: Text('Send Message'),
+                    onPressed: () {
+                      _sendSms();
+                    },
+                  ),
+                ),
               ],
             ),
           );
@@ -226,5 +242,31 @@ class _HomePageState extends State<HomePage> {
     var users = await Hive.openBox('users');
     print(users.getAt(0));
     return users.getAt(0);
+  }
+
+  void _sendSms() async {
+    List<String> recepients = [];
+    var contacts = await Hive.openBox('contacts');
+    for (int i = 0; i < contacts.length; i++) {
+      recepients.add(contacts.getAt(i).phones[0]);
+      print(contacts.getAt(i).phones[0]);
+    }
+    String emergencyMessage = "Help Me";
+    var message = await Hive.openBox('messages');
+    if (message.length != 0) {
+      emergencyMessage = message.getAt(0);
+    }
+    emergencyMessage = emergencyMessage +
+        "\nMy Location is latitude: " +
+        currPos.latitude.toString() +
+        " longitude: " +
+        currPos.longitude.toString();
+    for (int i = 0; i < recepients.length; i++) {}
+    String _result =
+        await sendSMS(message: emergencyMessage, recipients: recepients)
+            .catchError((onError) {
+      print(onError);
+    });
+    print(_result);
   }
 }
