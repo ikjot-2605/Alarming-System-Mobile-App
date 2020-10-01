@@ -11,6 +11,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:hive/hive.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:twilio_flutter/twilio_flutter.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -18,6 +19,10 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  TwilioFlutter twilioFlutter = TwilioFlutter(
+      accountSid: 'AC5a85fb35273aa8ee71ccc71d751792cc',
+      authToken: '228d60639f53601c758adc9748d259aa',
+      twilioNumber: '+12183877717');
   final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
   Position currPos;
   String currAdd;
@@ -261,6 +266,7 @@ class _HomePageState extends State<HomePage> {
         currPos.latitude.toString() +
         " longitude: " +
         currPos.longitude.toString();
+    twilioFlutter.sendSMS(toNumber: recepients[0], messageBody: 'hello world');
     for (int i = 0; i < recepients.length; i++) {}
     String _result =
         await sendSMS(message: emergencyMessage, recipients: recepients)
