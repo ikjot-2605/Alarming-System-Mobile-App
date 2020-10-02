@@ -21,6 +21,9 @@ class _HomePageState extends State<HomePage> {
   final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
   Position currPos;
   String currAdd;
+  int contactCount = 0;
+  String currentMessage;
+  //String preview;
   getCurrLocation() {
     geolocator
         .getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
@@ -72,6 +75,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     getUserFromHive();
     getCurrLocation();
+    getDetails();
     super.initState();
   }
 
@@ -217,12 +221,78 @@ class _HomePageState extends State<HomePage> {
                     ],
                   ),
                 ),
-                Expanded(
-                  child: FlatButton(
-                    child: Text('Send Message'),
-                    onPressed: () {
-                      _sendSms();
-                    },
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Container(
+                    width: MediaQuery.of(context).size.width/1.1,
+                    height:50.0,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                      color: Colors.grey[300],
+                    ),
+                    child: (contactCount == 0)
+                        ? Center(child: Text("You haven't set-up your emergency contacts yet."))
+                        : Center(
+                          child: Text(
+                              "You have $contactCount emergency contacts set up."),
+                        ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Container(
+                    width: MediaQuery.of(context).size.width/1.1,
+                    height:50.0,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                      color: Colors.grey[300],
+                    ),
+                    child: (currentMessage == null)
+                        ? Center(child: Text("You haven't set-up your emergency message yet."))
+                        : Center(
+                      child: Text(
+                          "Your emergency message : $currentMessage"),
+                    ),
+                  ),
+                ),
+//                Padding(
+//                  padding: const EdgeInsets.all(8.0),
+//                  child: Container(
+//                    width: MediaQuery.of(context).size.width/1.1,
+//                    height:50.0,
+//                    decoration: BoxDecoration(
+//                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
+//                      color: Colors.grey[300],
+//                    ),
+//                    child: Center(
+//                      child: Text(
+//                        'Your emergency message preview : $preview'
+//                      ),
+//                    ),
+//                    ),
+//                  ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                      color: Color(0xFF6770D2),
+                    ),
+                    child: FlatButton(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Icon(Icons.sentiment_neutral,color: Colors.white,),
+                          ),
+                          Text('Send Message',style: TextStyle(color:Colors.white),),
+                        ],
+                      ),
+                      onPressed: () {
+                        _sendSms();
+                      },
+                    ),
                   ),
                 ),
               ],
@@ -252,7 +322,7 @@ class _HomePageState extends State<HomePage> {
       print(contacts.getAt(i).phones[0]);
     }
     String emergencyMessage = "Help Me";
-    var message = await Hive.openBox('messages');
+    var message = await Hive.openBox('message');
     if (message.length != 0) {
       emergencyMessage = message.getAt(0);
     }
@@ -268,5 +338,27 @@ class _HomePageState extends State<HomePage> {
       print(onError);
     });
     print(_result);
+  }
+
+  void getDetails() async {
+    var contacts = await Hive.openBox('contacts');
+    contactCount = contacts.length;
+    currentMessage = null;
+    var message = await Hive.openBox('message');
+    if (message.length != 0) currentMessage = message.getAt(0);
+    print(message.length);
+    print(message.getAt(0));
+//    if (currentMessage != null)
+//      preview = currentMessage +
+//          "\nMy Location is latitude: " +
+//          currPos.latitude.toString() +
+//          " longitude: " +
+//          currPos.longitude.toString();
+//    else
+//      preview = "Help Me" +
+//          "\nMy Location is latitude: " +
+//          currPos.latitude.toString() +
+//          " longitude: " +
+//          currPos.longitude.toString();
   }
 }
