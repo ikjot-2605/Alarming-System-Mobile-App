@@ -22,13 +22,14 @@ class AppUserAdapter extends TypeAdapter<AppUser> {
       imageUrl: fields[2] as String,
       phoneNumber: fields[3] as String,
       googleLoggedIn: fields[5] as bool,
+      firebaseId: fields[6] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, AppUser obj) {
     writer
-      ..writeByte(5)
+      ..writeByte(6)
       ..writeByte(0)
       ..write(obj.name)
       ..writeByte(1)
@@ -38,7 +39,9 @@ class AppUserAdapter extends TypeAdapter<AppUser> {
       ..writeByte(3)
       ..write(obj.phoneNumber)
       ..writeByte(5)
-      ..write(obj.googleLoggedIn);
+      ..write(obj.googleLoggedIn)
+      ..writeByte(6)
+      ..write(obj.firebaseId);
   }
 
   @override

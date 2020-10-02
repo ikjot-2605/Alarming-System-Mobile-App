@@ -12,5 +12,7 @@ class AppUser {
   String phoneNumber;
   @HiveField(5)
   bool googleLoggedIn;
-  AppUser({this.name,this.email,this.imageUrl,this.phoneNumber,this.googleLoggedIn});
+  @HiveField(6)
+  String firebaseId;
+  AppUser({this.name,this.email,this.imageUrl,this.phoneNumber,this.googleLoggedIn,this.firebaseId});
 }

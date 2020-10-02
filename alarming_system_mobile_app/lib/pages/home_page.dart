@@ -310,7 +310,6 @@ class _HomePageState extends State<HomePage> {
 
   Future<AppUser> getUserFromHive() async {
     var users = await Hive.openBox('users');
-    print(users.getAt(0));
     return users.getAt(0);
   }
 
@@ -346,8 +345,6 @@ class _HomePageState extends State<HomePage> {
     currentMessage = null;
     var message = await Hive.openBox('message');
     if (message.length != 0) currentMessage = message.getAt(0);
-    print(message.length);
-    print(message.getAt(0));
 //    if (currentMessage != null)
 //      preview = currentMessage +
 //          "\nMy Location is latitude: " +
