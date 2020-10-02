@@ -13,6 +13,9 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
+  final AppUser appUser;
+
+  HomePage(this.appUser, {Key key}) : super(key: key);
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -56,15 +59,9 @@ class _HomePageState extends State<HomePage> {
   Future<void> signOut(bool google) async {
     if (google) {
       await googleSignIn.signOut();
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.clear();
-      Hive.box('users').clear();
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => RegisterPage()));
     } else {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.clear();
-      Hive.box('users').clear();
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => RegisterPage()));
     }
@@ -151,7 +148,9 @@ class _HomePageState extends State<HomePage> {
                     title: Text('Settings'),
                   ),
                   ListTile(
-                    onTap: () {
+                    onTap: () async{
+                      SharedPreferences prefs = await SharedPreferences.getInstance();
+                      await prefs.remove('curruser');
                       signOut(snapshot.data.googleLoggedIn);
                     },
                     leading: Icon(Icons.exit_to_app),
@@ -309,8 +308,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<AppUser> getUserFromHive() async {
-    var users = await Hive.openBox('users');
-    return users.getAt(0);
+    return widget.appUser;
   }
 
   void _sendSms() async {

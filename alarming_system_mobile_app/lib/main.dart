@@ -48,25 +48,27 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  Future<String> fetchDetailsAdmin() async {
+  Future<AppUser> fetchDetailsAdmin() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String name = prefs.getString('user_name');
-    return name;
+    String emailII = prefs.getString('curruser');
+    var users = await Hive.openBox('users');
+    for(int i=0;i<users.length;i++){
+      if(emailII==users.getAt(i).email){
+        return users.getAt(i);
+      }
+    }
+
   }
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<String>(
+    return FutureBuilder<AppUser>(
       future: fetchDetailsAdmin(),
-      builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+      builder: (BuildContext context, AsyncSnapshot<AppUser> snapshot) {
         print(snapshot);
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Scaffold(body: Center(child: CircularProgressIndicator()));
         } else if (snapshot.hasData) {
-          if (snapshot.data == null) {
-            return RegisterPage();
-          } else {
-            return HomePage();
-          }
+          return HomePage(snapshot.data);
         } else if (snapshot.hasError) {
           return RegisterPage();
         } else if (snapshot.data == null) {

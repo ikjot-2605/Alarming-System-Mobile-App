@@ -38,7 +38,17 @@ class _RegisterPageState extends State<RegisterPage> {
       assert(await user.getIdToken() != null);
       final User currentUser = _auth.currentUser;
       assert(user.uid == currentUser.uid);
-      createRecord(user.displayName, user.email, user.phoneNumber,user.photoURL,true);
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('curruser',user.email);
+      checkIfFirstTime(user.email).then((value){
+        if(value==null){
+          createRecord(user.displayName, user.email, user.phoneNumber,user.photoURL,true);
+        }
+        else{
+          Navigator.push(context, MaterialPageRoute(builder: (context)=>HomePage(value)));
+        }
+      });
+
       return '$user';
     }
 
@@ -70,14 +80,14 @@ class _RegisterPageState extends State<RegisterPage> {
     users.add(user);
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    await prefs.setString('user_name', name);
-    await prefs.setString('user_email', email);
-    await prefs.setString('user_phone', phone);
-    await prefs.setString('user_id', firebaseId);
+    await prefs.setString('user_name'+email, name);
+    await prefs.setString('user_email'+email, email);
+    await prefs.setString('user_phone'+email, phone);
+    await prefs.setString('user_id'+email, firebaseId);
     Navigator.push(context,
       MaterialPageRoute(
         builder: (context) {
-          return HomePage();
+          return HomePage(AppUser(name: name,email: email,phoneNumber: phone,imageUrl: photoUrl,googleLoggedIn: googleLoggedIn,firebaseId: firebaseId));
         },
       ),
     );
@@ -164,5 +174,14 @@ class _RegisterPageState extends State<RegisterPage> {
         ),
       ),
     );
+  }
+  Future<AppUser> checkIfFirstTime(String givenEmail)async{
+    var users = await Hive.openBox('users');
+    for(int i=0;i<users.length;i++){
+      if(givenEmail==users.getAt(i).email){
+        return users.getAt(i);
+      }
+    }
+    return null;
   }
 }
