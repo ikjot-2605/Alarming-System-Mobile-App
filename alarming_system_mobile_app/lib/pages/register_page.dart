@@ -1,4 +1,5 @@
 import 'package:alarming_system_mobile_app/pages/home_page.dart';
+import 'package:alarming_system_mobile_app/pages/waiting_for_home_page.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +21,23 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
+  Future<String> checkIfUserExists(String appUserEmail)async{
+    CollectionReference users = FirebaseFirestore.instance.collection('users');
+    var result = await users
+        .where("email", isEqualTo: appUserEmail)
+        .get();
+    print('UPCOMING MAJOR F');
+    result.docs.forEach((res) {
+      print(res.data);
+    });
+    if(result.docs.length>0){
+      print(result.docs[0].id);
+      return result.docs[0].id;
+    }
+    else{
+      return null;
+    }
+  }
   Future<String> signInWithGoogle() async {
     await Firebase.initializeApp();
 
@@ -40,12 +58,13 @@ class _RegisterPageState extends State<RegisterPage> {
       assert(user.uid == currentUser.uid);
       SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.setString('curruser',user.email);
-      checkIfFirstTime(user.email).then((value){
-        if(value==null){
-          createRecord(user.displayName, user.email, user.phoneNumber,user.photoURL,true);
+      checkIfUserExists(user.email).then((value){
+        if(value!=null){
+          AppUser appUsers = new AppUser(name:user.displayName,email:user.email,imageUrl:user.photoURL,phoneNumber:user.phoneNumber,googleLoggedIn:true,firebaseId: value);
+          Navigator.push(context, MaterialPageRoute(builder: (context)=>WaitingForHomePage(appUsers)));
         }
         else{
-          Navigator.push(context, MaterialPageRoute(builder: (context)=>HomePage(value)));
+          createRecord(user.displayName, user.email, user.phoneNumber,user.photoURL,true);
         }
       });
 
@@ -66,7 +85,9 @@ class _RegisterPageState extends State<RegisterPage> {
         .add({
       'name': name,
       'email': email,
-      'phone': phone
+      'phone': phone,
+      'message':"",
+      'emergency_contacts':{}
     })
         .then((value){
       storeDetailsInHive(name, email, phone, photoURL, googleLoggedIn, value.id);
@@ -87,7 +108,7 @@ class _RegisterPageState extends State<RegisterPage> {
     Navigator.push(context,
       MaterialPageRoute(
         builder: (context) {
-          return HomePage(AppUser(name: name,email: email,phoneNumber: phone,imageUrl: photoUrl,googleLoggedIn: googleLoggedIn,firebaseId: firebaseId));
+          return HomePage(AppUser(name: name,email: email,phoneNumber: phone,imageUrl: photoUrl,googleLoggedIn: googleLoggedIn,firebaseId: firebaseId),"",{});
         },
       ),
     );

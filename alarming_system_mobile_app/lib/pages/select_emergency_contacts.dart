@@ -14,7 +14,9 @@ import 'error_page.dart';
 class SelectEmergencyContactsPage extends StatefulWidget {
   final List<UserContact> contactList;
   final AppUser appUser;
-  SelectEmergencyContactsPage(this.contactList, this.appUser, {Key key})
+  final String userMessage;
+  final Map<String,Map<String,String>> userContacts;
+  SelectEmergencyContactsPage(this.contactList, this.appUser,this.userContacts,this.userMessage, {Key key})
       : super(key: key);
   @override
   _SelectEmergencyContactsPageState createState() =>
@@ -256,7 +258,7 @@ class _SelectEmergencyContactsPageState
     print(widget.appUser.firebaseId);
     sendRecordsToFirestore(mapContacts).then((value) {
       Navigator.push(context,
-          MaterialPageRoute(builder: (context) => HomePage(widget.appUser)));
+          MaterialPageRoute(builder: (context) => HomePage(widget.appUser,widget.userMessage,widget.userContacts)));
       Flushbar(
         title: "Success",
         message: "Your contacts were saved successfully",

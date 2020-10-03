@@ -14,8 +14,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
   final AppUser appUser;
-
-  HomePage(this.appUser, {Key key}) : super(key: key);
+  final String userMessage;
+  final Map<String,dynamic> userContacts;
+  HomePage(this.appUser,this.userMessage,this.userContacts, {Key key}) : super(key: key);
   @override
   _HomePageState createState() => _HomePageState();
 }

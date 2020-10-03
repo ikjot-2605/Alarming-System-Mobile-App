@@ -2,6 +2,7 @@ import 'package:alarming_system_mobile_app/model/AppUser.dart';
 import 'package:alarming_system_mobile_app/model/UserContact.dart';
 import 'package:alarming_system_mobile_app/pages/home_page.dart';
 import 'package:alarming_system_mobile_app/pages/register_page.dart';
+import 'package:alarming_system_mobile_app/pages/waiting_for_home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -68,7 +69,7 @@ class _MyHomePageState extends State<MyHomePage> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Scaffold(body: Center(child: CircularProgressIndicator()));
         } else if (snapshot.hasData) {
-          return HomePage(snapshot.data);
+          return WaitingForHomePage(snapshot.data);
         } else if (snapshot.hasError) {
           return RegisterPage();
         } else if (snapshot.data == null) {

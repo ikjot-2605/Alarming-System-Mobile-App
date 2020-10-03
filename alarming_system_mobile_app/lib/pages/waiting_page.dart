@@ -10,10 +10,13 @@ import 'error_page.dart';
 class WaitingPage extends StatefulWidget {
   final List<Contact> contactList;
   final AppUser appUser;
+  final String userMessage;
+  final Map<String,Map<String,String>> userContacts;
   const WaitingPage({
     Key key,
     this.contactList,
     this.appUser,
+    this.userContacts,this.userMessage,
   }) : super(key: key);
   @override
   _WaitingPageState createState() => _WaitingPageState();
@@ -58,7 +61,7 @@ class _WaitingPageState extends State<WaitingPage> {
             userContact.emails=emails;
             contactList.add(userContact);
           }
-          return SelectEmergencyContactsPage(contactList,widget.appUser);
+          return SelectEmergencyContactsPage(contactList,widget.appUser,widget.userContacts,widget.userMessage);
         } else if (snapshot.hasError) {
           return ErrorPage();
         } else if (snapshot.data == null) {
