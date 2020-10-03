@@ -1,3 +1,4 @@
+import 'package:alarming_system_mobile_app/model/AppUser.dart';
 import 'package:alarming_system_mobile_app/model/UserContact.dart';
 import 'package:alarming_system_mobile_app/pages/select_emergency_contacts.dart';
 import 'package:flutter/cupertino.dart';
@@ -8,9 +9,11 @@ import 'error_page.dart';
 
 class WaitingPage extends StatefulWidget {
   final List<Contact> contactList;
+  final AppUser appUser;
   const WaitingPage({
     Key key,
     this.contactList,
+    this.appUser,
   }) : super(key: key);
   @override
   _WaitingPageState createState() => _WaitingPageState();
@@ -55,7 +58,7 @@ class _WaitingPageState extends State<WaitingPage> {
             userContact.emails=emails;
             contactList.add(userContact);
           }
-          return SelectEmergencyContactsPage(contactList);
+          return SelectEmergencyContactsPage(contactList,widget.appUser);
         } else if (snapshot.hasError) {
           return ErrorPage();
         } else if (snapshot.data == null) {

@@ -173,7 +173,7 @@ class _HomePageState extends State<HomePage> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => WaitingPage()));
+                              builder: (context) => WaitingPage(appUser: widget.appUser,)));
                     },
                     leading: Icon(Icons.contacts),
                     title: Text('Modify Emergency Contacts'),
