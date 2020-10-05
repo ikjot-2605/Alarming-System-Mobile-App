@@ -1,3 +1,4 @@
+import 'package:alarming_system_mobile_app/model/UserContact.dart';
 import 'package:hive/hive.dart';
 part 'AppUser.g.dart';
 @HiveType(typeId: 1)
@@ -14,5 +15,9 @@ class AppUser {
   bool googleLoggedIn;
   @HiveField(6)
   String firebaseId;
-  AppUser({this.name,this.email,this.imageUrl,this.phoneNumber,this.googleLoggedIn,this.firebaseId});
+  @HiveField(7)
+  List<UserContact> emergencyContacts;
+  @HiveField(8)
+  String emergencyMessage;
+  AppUser({this.name,this.email,this.imageUrl,this.phoneNumber,this.googleLoggedIn,this.firebaseId,this.emergencyContacts,this.emergencyMessage});
 }

@@ -1,8 +1,14 @@
+import 'package:alarming_system_mobile_app/model/AppUser.dart';
+import 'package:alarming_system_mobile_app/pages/home_page.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 
 class DraftMessagePage extends StatefulWidget {
+  final AppUser appUser;
+  DraftMessagePage(this.appUser, {Key key})
+      : super(key: key);
   @override
   _DraftMessagePageState createState() => _DraftMessagePageState();
 }
@@ -126,20 +132,30 @@ class _DraftMessagePageState extends State<DraftMessagePage> {
   }
 
   Future<String> getMessageFromHive() async {
-    var message = await Hive.openBox('message');
-    print(message.getAt(0));
-    return message.getAt(0);
+    return widget.appUser.emergencyMessage;
   }
 
   void storeDetailsInHive(String message) async {
-    var messages = await Hive.openBox('message');
-    if (messages.length > 0) messages.deleteAt(0);
-    messages.add(message);
-    Navigator.pop(context);
-    Flushbar(
-      title: "Success",
-      message: "Your message was saved successfully",
-      duration: Duration(seconds: 3),
-    )..show(context);
+    CollectionReference users = FirebaseFirestore.instance.collection('users');
+    return users.doc(widget.appUser.firebaseId).update({
+      'message':message
+    }).then((value){
+      AppUser toSend = new AppUser(
+        name: widget.appUser.name,
+        email: widget.appUser.email,
+        imageUrl: widget.appUser.imageUrl,
+        phoneNumber: widget.appUser.phoneNumber,
+        googleLoggedIn: true,
+        firebaseId: widget.appUser.firebaseId,
+        emergencyContacts: widget.appUser.emergencyContacts,
+        emergencyMessage: message,
+      );
+      Navigator.push(context, MaterialPageRoute(builder: (context)=>HomePage(toSend)));
+      Flushbar(
+        title: "Success",
+        message: "Your message was saved successfully",
+        duration: Duration(seconds: 3),
+      )..show(context);
+    });
   }
 }

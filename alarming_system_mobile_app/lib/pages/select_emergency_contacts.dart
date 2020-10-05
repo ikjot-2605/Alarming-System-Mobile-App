@@ -14,9 +14,7 @@ import 'error_page.dart';
 class SelectEmergencyContactsPage extends StatefulWidget {
   final List<UserContact> contactList;
   final AppUser appUser;
-  final String userMessage;
-  final Map<String,Map<String,String>> userContacts;
-  SelectEmergencyContactsPage(this.contactList, this.appUser,this.userContacts,this.userMessage, {Key key})
+  SelectEmergencyContactsPage(this.contactList, this.appUser, {Key key})
       : super(key: key);
   @override
   _SelectEmergencyContactsPageState createState() =>
@@ -35,6 +33,13 @@ class _SelectEmergencyContactsPageState
   List<UserContact> searchResults;
   @override
   void initState() {
+    for(int i=0;i<widget.contactList.length;i++){
+      if(widget.contactList[i].displayName=="Bro!"){
+        print(widget.contactList[i].displayName);
+        print(widget.contactList[i].emails);
+        print(widget.contactList[i].phones);
+      }
+    }
     getContactsFromHive();
     initializeFirebase();
     contacts.value = widget.contactList;
@@ -53,8 +58,10 @@ class _SelectEmergencyContactsPageState
       floatingActionButton: (selectedElements.length != 0)
           ? FloatingActionButton(
               onPressed: () {
+                print(selectedElements);
                 List<UserContact> contactList = [];
                 for (int i = 0; i < selectedElements.length; i++) {
+                  print(selectedElements.elementAt(i));
                   contactList.add(selectedElements.elementAt(i));
                 }
                 storeDetailsInHive(contactList);
@@ -149,6 +156,8 @@ class _SelectEmergencyContactsPageState
     return InkWell(
       onTap: () {
         setState(() {
+          print('THIS CONTACT EXISTS IN THE SET');
+          print(selectedElements.contains(contact));
           if (!selectedElements.contains(contact))
             selectedElements.add(contact);
           else {
@@ -213,20 +222,21 @@ class _SelectEmergencyContactsPageState
   }
 
   void getContactsFromHive() async {
-    var contacts = await Hive.openBox('contacts');
+    List<UserContact> contacts = widget.appUser.emergencyContacts;
     for (int i = 0; i < contacts.length; i++) {
-      selectedElements.add(contacts.getAt(i));
+      if(contacts[i].displayName=="Bro!"){
+        print('HILO');
+        print(contacts[i].displayName);
+        print(contacts[i].phones);
+        print(contacts[i].emails);
+      }
+      selectedElements.add(contacts[i]);
     }
   }
 
   void storeDetailsInHive(List<UserContact> contactList) async {
-    var contacts = await Hive.openBox('contacts');
-    while (contacts.length > 0) {
-      contacts.deleteAt(0);
-    }
-    for (int i = 0; i < contactList.length; i++) {
-      contacts.add(contactList[i]);
-    }
+    print('THIS IS THE LENGTH NOW');
+    print(contactList.length);
     createMap(contactList);
   }
 
@@ -234,16 +244,14 @@ class _SelectEmergencyContactsPageState
       Map<String, Map<String, String>> maps) async {
     CollectionReference users = FirebaseFirestore.instance.collection('users');
     return users.doc(widget.appUser.firebaseId).update({
-      'name': widget.appUser.name,
-      'email': widget.appUser.email,
-      'phone': widget.appUser.phoneNumber,
       'emergency_contacts': maps
     });
   }
 
   void createMap(List<UserContact> contactsListForMap) {
+    print('THIS IS THE LENGTH NOW');
+    print(contactsListForMap.length);
     Map<String, Map<String,String>> mapContacts = new Map();
-    print(mapContacts);
     for (int i = 0; i < contactsListForMap.length; i++) {
       mapContacts["$i"] = {
         "name": contactsListForMap[i].displayName,
@@ -255,10 +263,21 @@ class _SelectEmergencyContactsPageState
             : "Not Specified"
       };
     }
-    print(widget.appUser.firebaseId);
+    print('THIS IS THE LENGTH NOW');
+    print(mapContacts.length);
     sendRecordsToFirestore(mapContacts).then((value) {
+      AppUser toSend = new AppUser(
+          name: widget.appUser.name,
+          email: widget.appUser.email,
+          imageUrl: widget.appUser.imageUrl,
+          phoneNumber: widget.appUser.phoneNumber,
+          googleLoggedIn: true,
+          firebaseId: widget.appUser.firebaseId,
+          emergencyContacts: contactsListForMap,
+          emergencyMessage: widget.appUser.emergencyMessage,
+      );
       Navigator.push(context,
-          MaterialPageRoute(builder: (context) => HomePage(widget.appUser,widget.userMessage,widget.userContacts)));
+          MaterialPageRoute(builder: (context) => HomePage(toSend)));
       Flushbar(
         title: "Success",
         message: "Your contacts were saved successfully",

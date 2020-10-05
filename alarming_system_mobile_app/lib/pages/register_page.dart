@@ -108,7 +108,7 @@ class _RegisterPageState extends State<RegisterPage> {
     Navigator.push(context,
       MaterialPageRoute(
         builder: (context) {
-          return HomePage(AppUser(name: name,email: email,phoneNumber: phone,imageUrl: photoUrl,googleLoggedIn: googleLoggedIn,firebaseId: firebaseId),"",{});
+          return HomePage(AppUser(name: name,email: email,phoneNumber: phone,imageUrl: photoUrl,googleLoggedIn: googleLoggedIn,firebaseId: firebaseId,emergencyContacts:[],emergencyMessage:""));
         },
       ),
     );

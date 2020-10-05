@@ -45,6 +45,8 @@ class _WaitingPageState extends State<WaitingPage> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Scaffold(body: Center(child: CircularProgressIndicator()));
         } else if (snapshot.hasData) {
+          print('hi');
+          print(snapshot.data.length);
           List<UserContact> contactList=[];
           for(int i=0;i<snapshot.data.length;i++){
             UserContact userContact = new UserContact();
@@ -53,15 +55,19 @@ class _WaitingPageState extends State<WaitingPage> {
             for(int j=0;j<snapshot.data[i].phones.length;j++){
               phones.add(snapshot.data[i].phones.elementAt(j).value);
             }
-            userContact.phones=phones;
+            userContact.phones=["Not Specified"];
+            if(phones.length>0)userContact.phones[0]=(phones[0]);
             List<String> emails=[];
             for(int j=0;j<snapshot.data[i].emails.length;j++){
-              phones.add(snapshot.data[i].emails.elementAt(j).value);
+              emails.add(snapshot.data[i].emails.elementAt(j).value);
             }
-            userContact.emails=emails;
+            userContact.emails=["Not Specified"];
+            if(emails.length>0)userContact.emails[0]=(emails[0]);
             contactList.add(userContact);
           }
-          return SelectEmergencyContactsPage(contactList,widget.appUser,widget.userContacts,widget.userMessage);
+          print('this is contact lits length');
+          print(contactList.length);
+          return SelectEmergencyContactsPage(contactList,widget.appUser);
         } else if (snapshot.hasError) {
           return ErrorPage();
         } else if (snapshot.data == null) {

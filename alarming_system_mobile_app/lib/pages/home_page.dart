@@ -14,9 +14,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
   final AppUser appUser;
-  final String userMessage;
-  final Map<String,dynamic> userContacts;
-  HomePage(this.appUser,this.userMessage,this.userContacts, {Key key}) : super(key: key);
+  HomePage(this.appUser, {Key key}) : super(key: key);
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -162,7 +160,7 @@ class _HomePageState extends State<HomePage> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => DraftMessagePage()));
+                              builder: (context) => DraftMessagePage(widget.appUser)));
                     },
                     leading: Icon(Icons.message),
                     title: Text('Modify Emergency Message'),
@@ -230,11 +228,11 @@ class _HomePageState extends State<HomePage> {
                         borderRadius: BorderRadius.all(Radius.circular(10.0)),
                       color: Colors.grey[300],
                     ),
-                    child: (contactCount == 0)
+                    child: (widget.appUser.emergencyContacts.length == 0)
                         ? Center(child: Text("You haven't set-up your emergency contacts yet."))
                         : Center(
                           child: Text(
-                              "You have $contactCount emergency contacts set up."),
+                              "You have ${widget.appUser.emergencyContacts.length} emergency contacts set up."),
                         ),
                   ),
                 ),
@@ -247,11 +245,11 @@ class _HomePageState extends State<HomePage> {
                       borderRadius: BorderRadius.all(Radius.circular(10.0)),
                       color: Colors.grey[300],
                     ),
-                    child: (currentMessage == null)
+                    child: (widget.appUser.emergencyMessage == null||widget.appUser.emergencyMessage == "")
                         ? Center(child: Text("You haven't set-up your emergency message yet."))
                         : Center(
                       child: Text(
-                          "Your emergency message : $currentMessage"),
+                          "Your emergency message : ${widget.appUser.emergencyMessage}"),
                     ),
                   ),
                 ),
