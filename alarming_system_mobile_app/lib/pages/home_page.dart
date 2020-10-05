@@ -5,6 +5,8 @@ import 'package:alarming_system_mobile_app/pages/register_page.dart';
 import 'package:alarming_system_mobile_app/pages/select_emergency_contacts.dart';
 import 'package:alarming_system_mobile_app/pages/waiting_page.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dynamic_theme/dynamic_theme.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_sms/flutter_sms.dart';
 import 'package:geolocator/geolocator.dart';
@@ -177,6 +179,22 @@ class _HomePageState extends State<HomePage> {
                     leading: Icon(Icons.contacts),
                     title: Text('Modify Emergency Contacts'),
                   ),
+                  ListTile(
+                    onTap: () async {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => DraftMessagePage(widget.appUser)));
+                    },
+                    leading: Icon(Icons.wb_sunny),
+                    trailing: CupertinoSwitch(
+                        value: Theme.of(context).brightness==Brightness.dark,
+                        onChanged: (value){
+                          DynamicTheme.of(context).setBrightness(Theme.of(context).brightness == Brightness.dark? Brightness.light: Brightness.dark);
+                        }
+                    ),
+                    title:Text('Dark theme'),
+                  ),
                 ],
               ),
             ),
@@ -226,7 +244,7 @@ class _HomePageState extends State<HomePage> {
                     height:50.0,
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                      color: Colors.grey[300],
+                      color: Theme.of(context).brightness==Brightness.dark?Colors.grey[900]:Colors.grey[300],
                     ),
                     child: (widget.appUser.emergencyContacts.length == 0)
                         ? Center(child: Text("You haven't set-up your emergency contacts yet."))
@@ -243,7 +261,7 @@ class _HomePageState extends State<HomePage> {
                     height:50.0,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                      color: Colors.grey[300],
+                      color: Theme.of(context).brightness==Brightness.dark?Colors.grey[900]:Colors.grey[300],
                     ),
                     child: (widget.appUser.emergencyMessage == null||widget.appUser.emergencyMessage == "")
                         ? Center(child: Text("You haven't set-up your emergency message yet."))

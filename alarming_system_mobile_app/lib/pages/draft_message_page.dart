@@ -41,7 +41,7 @@ class _DraftMessagePageState extends State<DraftMessagePage> {
                 width: MediaQuery.of(context).size.width / 1.1,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                  color: Colors.grey[300],
+                  color: Theme.of(context).brightness==Brightness.dark?Colors.grey[900]:Colors.grey[300],
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),

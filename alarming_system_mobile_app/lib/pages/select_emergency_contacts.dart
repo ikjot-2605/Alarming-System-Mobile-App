@@ -170,7 +170,7 @@ class _SelectEmergencyContactsPageState
               height: 52,
               decoration: BoxDecoration(
                 color: (selectedElements.contains(contact))
-                    ? Colors.grey[200]
+                    ? Theme.of(context).brightness==Brightness.dark?Colors.grey[900]:Colors.grey[200]
                     : Colors.transparent,
                 border: Border.symmetric(
                   vertical: BorderSide(
