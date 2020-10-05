@@ -13,6 +13,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:hive/hive.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 
 class HomePage extends StatefulWidget {
   final AppUser appUser;
@@ -271,6 +272,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                 ),
+                contactsListCarousel(),
 //                Padding(
 //                  padding: const EdgeInsets.all(8.0),
 //                  child: Container(
@@ -366,5 +368,65 @@ class _HomePageState extends State<HomePage> {
 //          currPos.latitude.toString() +
 //          " longitude: " +
 //          currPos.longitude.toString();
+  }
+  Widget contactsListCarousel(){
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: CarouselSlider(
+        options: CarouselOptions(height: 100.0),
+        items: widget.appUser.emergencyContacts.map((i) {
+          return Builder(
+            builder: (BuildContext context) {
+              return Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                      color: Theme.of(context).brightness==Brightness.dark?Colors.grey[900]:Colors.grey[300],
+                    ),
+                    width: MediaQuery.of(context).size.width,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(i.displayName, style: TextStyle(fontSize: 16.0),),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top:8.0),
+                          child: Row(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(left:8.0),
+                                child: Text('Phone', style: TextStyle(fontSize: 12.0),),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(left:8.0),
+                                child: Text(i.phones[0], style: TextStyle(fontSize: 12.0),),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Row(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(left:8.0),
+                              child: Text('Email', style: TextStyle(fontSize: 12.0),),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(left:8.0),
+                              child: Text(i.emails[0], style: TextStyle(fontSize: 12.0),),
+                            ),
+                          ],
+                        ),
+                      ],
+                    )
+                ),
+              );
+            },
+          );
+        }).toList(),
+      ),
+    );
   }
 }
