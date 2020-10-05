@@ -84,7 +84,7 @@ class _HomePageState extends State<HomePage> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Scaffold(body: Center(child: CircularProgressIndicator()));
         } else if (snapshot.hasData) {
-          print(snapshot.data.imageUrl);
+          print(widget.appUser.imageUrl);
           return Scaffold(
             appBar: AppBar(
               centerTitle: true,
@@ -113,7 +113,7 @@ class _HomePageState extends State<HomePage> {
                               radius: MediaQuery.of(context).size.height / 20,
                               child: ClipOval(
                                 child: Image.network(
-                                  snapshot.data.imageUrl,
+                                  widget.appUser.imageUrl,
                                 ),
                               ),
                             ),
@@ -122,7 +122,7 @@ class _HomePageState extends State<HomePage> {
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 8.0),
                           child: Text(
-                            snapshot.data.name,
+                            widget.appUser.name,
                             style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.w400,
@@ -132,7 +132,7 @@ class _HomePageState extends State<HomePage> {
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Text(
-                            snapshot.data.email,
+                            widget.appUser.email,
                             style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.w200,
@@ -150,7 +150,7 @@ class _HomePageState extends State<HomePage> {
                     onTap: () async{
                       SharedPreferences prefs = await SharedPreferences.getInstance();
                       await prefs.remove('curruser');
-                      signOut(snapshot.data.googleLoggedIn);
+                      signOut(widget.appUser.googleLoggedIn);
                     },
                     leading: Icon(Icons.exit_to_app),
                     title: Text('Logout'),
@@ -298,7 +298,7 @@ class _HomePageState extends State<HomePage> {
           );
         } else if (snapshot.hasError) {
           return ErrorPage();
-        } else if (snapshot.data == null) {
+        } else if (widget.appUser == null) {
           return RegisterPage();
         } else
           return ErrorPage();
@@ -312,17 +312,11 @@ class _HomePageState extends State<HomePage> {
 
   void _sendSms() async {
     List<String> recepients = [];
-    var contacts = await Hive.openBox('contacts');
-    for (int i = 0; i < contacts.length; i++) {
-      recepients.add(contacts.getAt(i).phones[0]);
-      print(contacts.getAt(i).phones[0]);
+    for (int i = 0; i < widget.appUser.emergencyContacts.length; i++) {
+      recepients.add(widget.appUser.emergencyContacts[i].phones[0]);
     }
-    String emergencyMessage = "Help Me";
-    var message = await Hive.openBox('message');
-    if (message.length != 0) {
-      emergencyMessage = message.getAt(0);
-    }
-    emergencyMessage = emergencyMessage +
+    String emergencyMessage="";
+    emergencyMessage = widget.appUser.emergencyMessage +
         "\nMy Location is latitude: " +
         currPos.latitude.toString() +
         " longitude: " +
