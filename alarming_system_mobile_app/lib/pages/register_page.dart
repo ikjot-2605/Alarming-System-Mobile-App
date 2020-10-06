@@ -3,6 +3,7 @@ import 'package:alarming_system_mobile_app/pages/waiting_for_home_page.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hive/hive.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -115,28 +116,47 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Welcome'),
-        automaticallyImplyLeading: false,
-        elevation: 0,
-        backgroundColor: Theme.of(context).brightness != Brightness.dark
-            ? Color(0xFF6770D2)
-            : Colors.grey[900],
-        centerTitle: true,
-      ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text('Welcome to the alarming system app.',style: TextStyle(fontSize: 18,),),
+          //We take the image from the assets
+          Center(
+            child: SvgPicture.asset(
+                'assets/logo.svg',
+              height: 100.0,
+              color: Theme.of(context).brightness==Brightness.dark?Colors.white:Colors.blueGrey,
+            ),
+          ),
+          SizedBox(
+            height: 20,
+          ),
+          //Texts and Styling of them
+          Text(
+            'Welcome to ASM',
+            textAlign: TextAlign.center,
+            style: TextStyle( fontSize: 28),
           ),
           Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text('Please use your google account to login.',style: TextStyle(fontSize: 14,),),
+            padding: const EdgeInsets.only(top:8.0),
+            child: Text(
+              '(Alarming System Mobile)',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 14),
+            ),
           ),
-          Center(child: _signInWithGoogleButton())
+          SizedBox(height: 20),
+          Text(
+            'A one-stop application for all your emergencies!',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 16),
+          ),
+          SizedBox(
+            height: 30,
+          ),
+          //Our MaterialButton which when pressed will take us to a new screen named as
+          //LoginScreen
+          _signInWithGoogleButton(),
         ],
       ),
     );
