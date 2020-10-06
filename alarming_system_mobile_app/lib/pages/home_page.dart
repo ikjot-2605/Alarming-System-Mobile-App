@@ -336,7 +336,9 @@ class _HomePageState extends State<HomePage> {
         "\nMy Location is latitude: " +
         latitutde +
         " longitude: " +
-        longitude;
+        longitude+
+    "\nFollow this link to reach me:\n http://www.google.com/maps/place/$latitutde,$longitude";
+
     for (int i = 0; i < recepients.length; i++) {}
     String _result =
         await sendSMS(message: emergencyMessage, recipients: recepients)
