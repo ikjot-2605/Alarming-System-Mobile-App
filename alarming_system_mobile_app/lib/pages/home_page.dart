@@ -80,7 +80,16 @@ class _HomePageState extends State<HomePage> {
       builder: (BuildContext context, AsyncSnapshot<Location.LocationData> snapshot) {
         print(snapshot);
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Scaffold(body: Center(child: CircularProgressIndicator()));
+          return Scaffold(body: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Center(child: Text('Getting your location, please wait',style: TextStyle(fontWeight: FontWeight.w600),)),
+              Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Center(child: CircularProgressIndicator()),
+              ),
+            ],
+          ));
         } else if (snapshot.hasData) {
           return Scaffold(
             appBar: AppBar(

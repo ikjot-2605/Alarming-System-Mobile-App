@@ -48,27 +48,27 @@ class _WaitingForHomePageState extends State<WaitingForHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Please Wait'),
-        backgroundColor: Color(0xFF6770D2),
-        automaticallyImplyLeading: false,
-        centerTitle: true,
-        bottom: PreferredSize(
-          child: LinearProgressIndicator(
-            backgroundColor: Color(0xFF6770D2),
-          ),
-        ),
-      ),
+//      appBar: AppBar(
+//        title: Text('Please Wait'),
+//        backgroundColor: Color(0xFF6770D2),
+//        automaticallyImplyLeading: false,
+//        centerTitle: true,
+//        bottom: PreferredSize(
+//          child: LinearProgressIndicator(
+//            backgroundColor: Color(0xFF6770D2),
+//          ),
+//        ),
+//      ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Center(
               child: Text(
-                  'Kindly wait while we fetch your latest data from the cloud.')),
+                  'Kindly wait while we fetch your latest data from the cloud.',style: TextStyle(fontWeight: FontWeight.w600),)),
           Center(
             child: Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(24.0),
               child: CircularProgressIndicator(),
             ),
           ),

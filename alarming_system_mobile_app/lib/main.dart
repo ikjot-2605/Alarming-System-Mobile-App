@@ -47,8 +47,11 @@ class _MyHomePageState extends State<MyHomePage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String emailII = prefs.getString('curruser');
     var users = await Hive.openBox('users');
+    print(users.length);
     for(int i=0;i<users.length;i++){
+      print(users.getAt(i).email);
       if(emailII==users.getAt(i).email){
+        print(users.getAt(i).email);
         return users.getAt(i);
       }
     }

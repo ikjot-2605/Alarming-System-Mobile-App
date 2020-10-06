@@ -58,9 +58,14 @@ class _RegisterPageState extends State<RegisterPage> {
       assert(user.uid == currentUser.uid);
       SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.setString('curruser',user.email);
-      checkIfUserExists(user.email).then((value){
+      print('Set the string');
+      print(prefs.getString('curruser'));
+      checkIfUserExists(user.email).then((value)async{
         if(value!=null){
           AppUser appUsers = new AppUser(name:user.displayName,email:user.email,imageUrl:user.photoURL,phoneNumber:user.phoneNumber,googleLoggedIn:true,firebaseId: value);
+          var users = await Hive.openBox('users');
+          users.add(appUsers);
+          print(users.length);
           Navigator.push(context, MaterialPageRoute(builder: (context)=>WaitingForHomePage(appUsers)));
         }
         else{
@@ -99,6 +104,7 @@ class _RegisterPageState extends State<RegisterPage> {
     var users = await Hive.openBox('users');
     AppUser user = new AppUser(name:name,email:email,imageUrl:photoUrl,phoneNumber:phone,googleLoggedIn:googleLoggedIn,firebaseId: firebaseId);
     users.add(user);
+    print(users.length);
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     await prefs.setString('user_name'+email, name);
