@@ -265,6 +265,17 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                 ),
+                Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        'Your Emergency Contacts'
+                        ,style: TextStyle(fontSize: 13.0,fontWeight: FontWeight.w600),
+                      ),
+                    ),
+                  ],
+                ),
                 contactsListCarousel(),
 //                Padding(
 //                  padding: const EdgeInsets.all(8.0),
@@ -371,7 +382,15 @@ class _HomePageState extends State<HomePage> {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: CarouselSlider(
-        options: CarouselOptions(height: 100.0),
+        options: CarouselOptions(
+            height: 100.0,
+            enableInfiniteScroll: false,
+            autoPlay: true,
+            enlargeCenterPage: true,
+            autoPlayInterval: Duration(seconds: 3),
+            autoPlayAnimationDuration: Duration(milliseconds: 1500),
+            autoPlayCurve: Curves.fastOutSlowIn,
+        ),
         items: widget.appUser.emergencyContacts.map((i) {
           return Builder(
             builder: (BuildContext context) {
