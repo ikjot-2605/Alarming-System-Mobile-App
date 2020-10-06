@@ -1,3 +1,4 @@
+
 import 'package:alarming_system_mobile_app/model/AppUser.dart';
 import 'package:alarming_system_mobile_app/pages/draft_message_page.dart';
 import 'package:alarming_system_mobile_app/pages/error_page.dart';
@@ -15,6 +16,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:location/location.dart' as Location;
+import 'package:geocoder/geocoder.dart';
 
 class HomePage extends StatefulWidget {
   final AppUser appUser;
@@ -28,7 +30,7 @@ class _HomePageState extends State<HomePage> {
   Location.PermissionStatus _permissionGranted;
   bool _serviceEnabled;
   Location.LocationData _locationData;
-
+  var addresses;
   Future<Location.LocationData> getLocationFromLocator()async{
     _serviceEnabled = await location.serviceEnabled();
     if (!_serviceEnabled) {
@@ -44,6 +46,9 @@ class _HomePageState extends State<HomePage> {
       }
     }
     _locationData = await location.getLocation();
+    final coordinates = new Coordinates(_locationData.latitude, _locationData.longitude);
+    addresses =
+    await Geocoder.local.findAddressesFromCoordinates(coordinates);
     return _locationData;
   }
   int contactCount = 0;
@@ -211,7 +216,7 @@ class _HomePageState extends State<HomePage> {
                                   'Location',
                                   style: Theme.of(context).textTheme.caption,
                                 ),
-                                  Text(snapshot.data.latitude.toString()+" "+snapshot.data.longitude.toString(),
+                                  Text(addresses.first.addressLine,
                                       style: Theme.of(context)
                                           .textTheme
                                           .bodyText2),
@@ -296,7 +301,7 @@ class _HomePageState extends State<HomePage> {
                         ],
                       ),
                       onPressed: () {
-                        _sendSms(snapshot.data.latitude.toString(),snapshot.data.latitude.toString());
+                        _sendSms(snapshot.data.latitude.toString(),snapshot.data.longitude.toString());
                       },
                     ),
                   ),
@@ -323,7 +328,8 @@ class _HomePageState extends State<HomePage> {
   void _sendSms(String latitutde, String longitude) async {
     List<String> recepients = [];
     for (int i = 0; i < widget.appUser.emergencyContacts.length; i++) {
-      recepients.add(widget.appUser.emergencyContacts[i].phones[0]);
+      print(widget.appUser.emergencyContacts[i].phones[0].codeUnitAt(0));
+      if(widget.appUser.emergencyContacts[i].phones[0].codeUnitAt(0)!=78)recepients.add(widget.appUser.emergencyContacts[i].phones[0]);
     }
     String emergencyMessage="";
     emergencyMessage = widget.appUser.emergencyMessage +
