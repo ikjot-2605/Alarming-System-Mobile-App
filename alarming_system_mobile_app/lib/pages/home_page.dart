@@ -265,7 +265,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                 ),
-                Row(
+                (widget.appUser.emergencyContacts.length>0)?Row(
                   children: [
                     Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -275,8 +275,8 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                   ],
-                ),
-                contactsListCarousel(),
+                ):Container(),
+                (widget.appUser.emergencyContacts.length>0)?contactsListCarousel():Container(),
 //                Padding(
 //                  padding: const EdgeInsets.all(8.0),
 //                  child: Container(
