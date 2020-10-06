@@ -80,199 +80,191 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<AppUser>(
-      future: getUserFromHive(),
-      builder: (BuildContext context, AsyncSnapshot<AppUser> snapshot) {
-        print(snapshot);
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Scaffold(body: Center(child: CircularProgressIndicator()));
-        } else if (snapshot.hasData) {
-          print(widget.appUser.imageUrl);
-          return Scaffold(
-            appBar: AppBar(
-              centerTitle: true,
-              title: Text('Home'),
-              automaticallyImplyLeading: true,
-              backgroundColor: Theme.of(context).brightness != Brightness.dark
+    return Scaffold(
+      appBar: AppBar(
+        centerTitle: true,
+        title: Text('Home'),
+        automaticallyImplyLeading: true,
+        backgroundColor: Theme.of(context).brightness != Brightness.dark
+            ? Color(0xFF6770D2)
+            : Colors.grey[900],
+      ),
+      drawer: Drawer(
+        child: ListView(
+          children: [
+            Container(
+              height: MediaQuery.of(context).size.height / 5,
+              color: Theme.of(context).brightness != Brightness.dark
                   ? Color(0xFF6770D2)
                   : Colors.grey[900],
-            ),
-            drawer: Drawer(
-              child: ListView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    height: MediaQuery.of(context).size.height / 5,
-                    color: Theme.of(context).brightness != Brightness.dark
-                        ? Color(0xFF6770D2)
-                        : Colors.grey[900],
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: CircleAvatar(
-                              backgroundColor: Colors.transparent,
-                              radius: MediaQuery.of(context).size.height / 20,
-                              child: ClipOval(
-                                child: Image.network(
-                                  widget.appUser.imageUrl,
-                                ),
-                              ),
-                            ),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: CircleAvatar(
+                        backgroundColor: Colors.transparent,
+                        radius: MediaQuery.of(context).size.height / 20,
+                        child: ClipOval(
+                          child: Image.network(
+                            widget.appUser.imageUrl,
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                          child: Text(
-                            widget.appUser.name,
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w400,
-                                fontSize: 18.0),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            widget.appUser.email,
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w200,
-                                fontSize: 14.0),
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
                   ),
-                  ListTile(
-                    leading: Icon(Icons.settings),
-                    title: Text('Settings'),
-                  ),
-                  ListTile(
-                    onTap: () async{
-                      SharedPreferences prefs = await SharedPreferences.getInstance();
-                      await prefs.remove('curruser');
-                      signOut(widget.appUser.googleLoggedIn);
-                    },
-                    leading: Icon(Icons.exit_to_app),
-                    title: Text('Logout'),
-                  ),
-                  ListTile(
-                    onTap: () async {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => DraftMessagePage(widget.appUser)));
-                    },
-                    leading: Icon(Icons.message),
-                    title: Text('Modify Emergency Message'),
-                  ),
-                  ListTile(
-                    onTap: () async {
-                      if (!((await Permission.contacts.isGranted) == true))
-                        await Permission.contacts.request();
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => WaitingPage(appUser: widget.appUser,)));
-                    },
-                    leading: Icon(Icons.contacts),
-                    title: Text('Modify Emergency Contacts'),
-                  ),
-                  ListTile(
-                    onTap: () async {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => DraftMessagePage(widget.appUser)));
-                    },
-                    leading: Icon(Icons.wb_sunny),
-                    trailing: CupertinoSwitch(
-                        value: Theme.of(context).brightness==Brightness.dark,
-                        onChanged: (value){
-                          DynamicTheme.of(context).setBrightness(Theme.of(context).brightness == Brightness.dark? Brightness.light: Brightness.dark);
-                        }
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: Text(
+                      widget.appUser.name,
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w400,
+                          fontSize: 18.0),
                     ),
-                    title:Text('Dark theme'),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      widget.appUser.email,
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w200,
+                          fontSize: 14.0),
+                    ),
                   ),
                 ],
               ),
             ),
-            body: Column(
+            ListTile(
+              leading: Icon(Icons.settings),
+              title: Text('Settings'),
+            ),
+            ListTile(
+              onTap: () async{
+                SharedPreferences prefs = await SharedPreferences.getInstance();
+                await prefs.remove('curruser');
+                signOut(widget.appUser.googleLoggedIn);
+              },
+              leading: Icon(Icons.exit_to_app),
+              title: Text('Logout'),
+            ),
+            ListTile(
+              onTap: () async {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => DraftMessagePage(widget.appUser)));
+              },
+              leading: Icon(Icons.message),
+              title: Text('Modify Emergency Message'),
+            ),
+            ListTile(
+              onTap: () async {
+                if (!((await Permission.contacts.isGranted) == true))
+                  await Permission.contacts.request();
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => WaitingPage(appUser: widget.appUser,)));
+              },
+              leading: Icon(Icons.contacts),
+              title: Text('Modify Emergency Contacts'),
+            ),
+            ListTile(
+              onTap: () async {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => DraftMessagePage(widget.appUser)));
+              },
+              leading: Icon(Icons.wb_sunny),
+              trailing: CupertinoSwitch(
+                  value: Theme.of(context).brightness==Brightness.dark,
+                  onChanged: (value){
+                    DynamicTheme.of(context).setBrightness(Theme.of(context).brightness == Brightness.dark? Brightness.light: Brightness.dark);
+                  }
+              ),
+              title:Text('Dark theme'),
+            ),
+          ],
+        ),
+      ),
+      body: Column(
+        children: <Widget>[
+          Container(
+            decoration: BoxDecoration(
+              color: Theme.of(context).canvasColor,
+            ),
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Column(
               children: <Widget>[
-                Container(
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).canvasColor,
-                  ),
-                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  child: Column(
-                    children: <Widget>[
-                      Row(
+                Row(
+                  children: <Widget>[
+                    Icon(Icons.location_on),
+                    SizedBox(
+                      width: 8,
+                    ),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          Icon(Icons.location_on),
-                          SizedBox(
-                            width: 8,
+                          Text(
+                            'Location',
+                            style: Theme.of(context).textTheme.caption,
                           ),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Text(
-                                  'Location',
-                                  style: Theme.of(context).textTheme.caption,
-                                ),
-                                if (currPos != null && currAdd != null)
-                                  Text(currAdd,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyText2),
-                              ],
-                            ),
-                          ),
-                          SizedBox(
-                            width: 8,
-                          ),
+                          if (currPos != null && currAdd != null)
+                            Text(currAdd,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyText2),
                         ],
                       ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Container(
-                    width: MediaQuery.of(context).size.width/1.1,
-                    height:50.0,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                      color: Theme.of(context).brightness==Brightness.dark?Colors.grey[900]:Colors.grey[300],
                     ),
-                    child: (widget.appUser.emergencyContacts.length == 0)
-                        ? Center(child: Text("You haven't set-up your emergency contacts yet."))
-                        : Center(
-                          child: Text(
-                              "You have ${widget.appUser.emergencyContacts.length} emergency contacts set up."),
-                        ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Container(
-                    width: MediaQuery.of(context).size.width/1.1,
-                    height:50.0,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                      color: Theme.of(context).brightness==Brightness.dark?Colors.grey[900]:Colors.grey[300],
+                    SizedBox(
+                      width: 8,
                     ),
-                    child: (widget.appUser.emergencyMessage == null||widget.appUser.emergencyMessage == "")
-                        ? Center(child: Text("You haven't set-up your emergency message yet."))
-                        : Center(
-                      child: Text(
-                          "Your emergency message : ${widget.appUser.emergencyMessage}"),
-                    ),
-                  ),
+                  ],
                 ),
-                contactsListCarousel(),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Container(
+              width: MediaQuery.of(context).size.width/1.1,
+              height:50.0,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                color: Theme.of(context).brightness==Brightness.dark?Colors.grey[900]:Colors.grey[300],
+              ),
+              child: (widget.appUser.emergencyContacts.length == 0)
+                  ? Center(child: Text("You haven't set-up your emergency contacts yet."))
+                  : Center(
+                child: Text(
+                    "You have ${widget.appUser.emergencyContacts.length} emergency contacts set up."),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Container(
+              width: MediaQuery.of(context).size.width/1.1,
+              height:50.0,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                color: Theme.of(context).brightness==Brightness.dark?Colors.grey[900]:Colors.grey[300],
+              ),
+              child: (widget.appUser.emergencyMessage == null||widget.appUser.emergencyMessage == "")
+                  ? Center(child: Text("You haven't set-up your emergency message yet."))
+                  : Center(
+                child: Text(
+                    "Your emergency message : ${widget.appUser.emergencyMessage}"),
+              ),
+            ),
+          ),
+          contactsListCarousel(),
 //                Padding(
 //                  padding: const EdgeInsets.all(8.0),
 //                  child: Container(
@@ -289,40 +281,32 @@ class _HomePageState extends State<HomePage> {
 //                    ),
 //                    ),
 //                  ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                      color: Color(0xFF6770D2),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                color: Color(0xFF6770D2),
+              ),
+              child: FlatButton(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Icon(Icons.sentiment_neutral,color: Colors.white,),
                     ),
-                    child: FlatButton(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Icon(Icons.sentiment_neutral,color: Colors.white,),
-                          ),
-                          Text('Send Message',style: TextStyle(color:Colors.white),),
-                        ],
-                      ),
-                      onPressed: () {
-                        _sendSms();
-                      },
-                    ),
-                  ),
+                    Text('Send Message',style: TextStyle(color:Colors.white),),
+                  ],
                 ),
-              ],
+                onPressed: () {
+                  _sendSms();
+                },
+              ),
             ),
-          );
-        } else if (snapshot.hasError) {
-          return ErrorPage();
-        } else if (widget.appUser == null) {
-          return RegisterPage();
-        } else
-          return ErrorPage();
-      },
+          ),
+        ],
+      ),
     );
   }
 

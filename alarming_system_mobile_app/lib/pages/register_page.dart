@@ -26,7 +26,6 @@ class _RegisterPageState extends State<RegisterPage> {
     var result = await users
         .where("email", isEqualTo: appUserEmail)
         .get();
-    print('UPCOMING MAJOR F');
     result.docs.forEach((res) {
       print(res.data);
     });
@@ -118,6 +117,7 @@ class _RegisterPageState extends State<RegisterPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Welcome'),
+        automaticallyImplyLeading: false,
         elevation: 0,
         backgroundColor: Theme.of(context).brightness != Brightness.dark
             ? Color(0xFF6770D2)
