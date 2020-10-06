@@ -121,7 +121,7 @@ class _SelectEmergencyContactsPageState
               12,
             ),
             child: Text(
-              'Choose UserContact',
+              'Choose Emergency Contacts',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
