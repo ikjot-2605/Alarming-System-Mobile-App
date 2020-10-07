@@ -62,7 +62,7 @@ class _RegisterPageState extends State<RegisterPage> {
       print(prefs.getString('curruser'));
       checkIfUserExists(user.email).then((value)async{
         if(value!=null){
-          AppUser appUsers = new AppUser(name:user.displayName,email:user.email,imageUrl:user.photoURL,phoneNumber:user.phoneNumber,googleLoggedIn:true,firebaseId: value);
+          AppUser appUsers = new AppUser(name:user.displayName,email:user.email,imageUrl:user.photoURL,phoneNumber:user.phoneNumber,googleLoggedIn:true,firebaseId: value,emergencyContacts: [],emergencyMessage: "");
           var users = await Hive.openBox('users');
           int flag=0;
           for(int i=0;i<users.length;i++){
