@@ -7,6 +7,7 @@ import 'package:alarming_system_mobile_app/pages/select_emergency_contacts.dart'
 import 'package:alarming_system_mobile_app/pages/waiting_page.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_sms/flutter_sms.dart';
@@ -26,6 +27,9 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  void initializeFirebase()async{
+    await Firebase.initializeApp();
+  }
   Location.Location location = new Location.Location();
   Location.PermissionStatus _permissionGranted;
   bool _serviceEnabled;
@@ -68,6 +72,11 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
+    try{
+        initializeFirebase();
+    }catch(e){
+      print(e);
+    }
     getUserFromHive();
     getDetails();
     super.initState();
