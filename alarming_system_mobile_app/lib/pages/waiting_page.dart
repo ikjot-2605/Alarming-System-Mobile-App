@@ -129,7 +129,7 @@ class _WaitingPageState extends State<WaitingPage> {
   }
 
   Future<List<Contact>> getContacts() async{
-    Iterable<Contact> contacts = await ContactsService.getContacts();
+    Iterable<Contact> contacts = await ContactsService.getContacts(withThumbnails: false);
     List<Contact> contactsList = contacts.toList();
     return contactsList;
   }
