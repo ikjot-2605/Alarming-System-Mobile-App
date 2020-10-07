@@ -68,7 +68,7 @@ class _MyHomePageState extends State<MyHomePage> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Scaffold(body: Center(child: CircularProgressIndicator()));
         } else if (snapshot.hasData) {
-          return WaitingForHomePage(snapshot.data);
+          return HomePage(snapshot.data);
         } else if (snapshot.hasError) {
           return RegisterPage();
         } else if (snapshot.data == null) {

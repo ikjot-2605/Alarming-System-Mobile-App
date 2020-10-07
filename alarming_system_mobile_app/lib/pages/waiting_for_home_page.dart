@@ -37,7 +37,7 @@ class _WaitingForHomePageState extends State<WaitingForHomePage> {
           context,
           MaterialPageRoute(
               builder: (context) => HomePage(toSend)));
-    });
+    }).catchError((error) => print("Failed to add user: $error"));
   }
 
   @override

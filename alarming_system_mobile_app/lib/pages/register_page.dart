@@ -102,7 +102,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   void storeDetailsInHive(String name, String email,String phone,String photoUrl,bool googleLoggedIn,String firebaseId)async{
     var users = await Hive.openBox('users');
-    AppUser user = new AppUser(name:name,email:email,imageUrl:photoUrl,phoneNumber:phone,googleLoggedIn:googleLoggedIn,firebaseId: firebaseId);
+    AppUser user = new AppUser(name:name,email:email,imageUrl:photoUrl,phoneNumber:phone,googleLoggedIn:googleLoggedIn,firebaseId: firebaseId,emergencyMessage: "",emergencyContacts: []);
     users.add(user);
     print(users.length);
     SharedPreferences prefs = await SharedPreferences.getInstance();
