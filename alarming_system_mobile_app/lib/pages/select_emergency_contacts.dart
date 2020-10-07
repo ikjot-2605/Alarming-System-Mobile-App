@@ -248,7 +248,16 @@ class _SelectEmergencyContactsPageState
     });
   }
 
-  void createMap(List<UserContact> contactsListForMap) {
+  void createMap(List<UserContact> contactsListForMap) async{
+    var usersBox = await Hive.openBox('users');
+    for(int i=0;i<usersBox.length;i++){
+      if(usersBox.getAt(i).email==widget.appUser.email){
+        usersBox.deleteAt(i);
+        break;
+      }
+    }
+    AppUser sendingAppUser = new AppUser(name: widget.appUser.name,email: widget.appUser.email,phoneNumber: widget.appUser.phoneNumber,firebaseId: widget.appUser.firebaseId,imageUrl: widget.appUser.imageUrl,emergencyContacts: contactsListForMap,emergencyMessage: widget.appUser.emergencyMessage,googleLoggedIn: true);
+    usersBox.add(sendingAppUser);
     print('THIS IS THE LENGTH NOW');
     print(contactsListForMap.length);
     Map<String, Map<String,String>> mapContacts = new Map();

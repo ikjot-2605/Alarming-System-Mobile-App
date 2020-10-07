@@ -154,6 +154,15 @@ class _DraftMessagePageState extends State<DraftMessagePage> {
   }
 
   void storeDetailsInHive(String message) async {
+    var usersBox = await Hive.openBox('users');
+    for(int i=0;i<usersBox.length;i++){
+      if(usersBox.getAt(i).email==widget.appUser.email){
+        usersBox.deleteAt(i);
+        break;
+      }
+    }
+    AppUser sendingAppUser = new AppUser(name: widget.appUser.name,email: widget.appUser.email,phoneNumber: widget.appUser.phoneNumber,firebaseId: widget.appUser.firebaseId,imageUrl: widget.appUser.imageUrl,emergencyContacts: widget.appUser.emergencyContacts,emergencyMessage: message,googleLoggedIn: true);
+    usersBox.add(sendingAppUser);
     CollectionReference users = FirebaseFirestore.instance.collection('users');
     return users
         .doc(widget.appUser.firebaseId)

@@ -50,6 +50,8 @@ class _MyHomePageState extends State<MyHomePage> {
     print(users.length);
     for(int i=0;i<users.length;i++){
       print(users.getAt(i).email);
+      print(users.getAt(i).emergencyContacts);
+      print(users.getAt(i).emergencyMessage);
       if(emailII==users.getAt(i).email){
         print(users.getAt(i).email);
         return users.getAt(i);
