@@ -370,7 +370,7 @@ class _HomePageState extends State<HomePage> {
       padding: const EdgeInsets.all(8.0),
       child: CarouselSlider(
         options: CarouselOptions(
-            height: 100.0,
+            height: 110.0,
             enableInfiniteScroll: false,
             autoPlay: true,
             enlargeCenterPage: true,
