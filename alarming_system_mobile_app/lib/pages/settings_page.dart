@@ -129,12 +129,13 @@ class _SettingsPageState extends State<SettingsPage> {
             trailing: CupertinoSwitch(
                 value: Theme.of(context).brightness == Brightness.dark,
                 onChanged: (value) {
-                  DynamicTheme.of(context).setBrightness(
-                      Theme.of(context).brightness == Brightness.dark
-                          ? Brightness.light
-                          : Brightness.dark);
+//                  DynamicTheme.of(context).setBrightness(
+//                      Theme.of(context).brightness == Brightness.dark
+//                          ? Brightness.light
+//                          : Brightness.dark);
                 }),
             title: Text('Dark theme'),
+            subtitle: Text('Currently not in production'),
           ),
         ],
       ),
