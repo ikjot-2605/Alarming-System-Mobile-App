@@ -64,7 +64,13 @@ class _RegisterPageState extends State<RegisterPage> {
         if(value!=null){
           AppUser appUsers = new AppUser(name:user.displayName,email:user.email,imageUrl:user.photoURL,phoneNumber:user.phoneNumber,googleLoggedIn:true,firebaseId: value);
           var users = await Hive.openBox('users');
-          users.add(appUsers);
+          int flag=0;
+          for(int i=0;i<users.length;i++){
+            if(users.getAt(i).email==user.email){
+                 flag=1;
+            }
+          }
+          if(flag==0)users.add(appUsers);
           print(users.length);
           Navigator.push(context, MaterialPageRoute(builder: (context)=>WaitingForHomePage(appUsers)));
         }
