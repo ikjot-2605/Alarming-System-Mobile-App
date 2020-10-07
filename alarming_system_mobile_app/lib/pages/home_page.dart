@@ -4,6 +4,7 @@ import 'package:alarming_system_mobile_app/pages/draft_message_page.dart';
 import 'package:alarming_system_mobile_app/pages/error_page.dart';
 import 'package:alarming_system_mobile_app/pages/register_page.dart';
 import 'package:alarming_system_mobile_app/pages/select_emergency_contacts.dart';
+import 'package:alarming_system_mobile_app/pages/settings_page.dart';
 import 'package:alarming_system_mobile_app/pages/waiting_page.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
@@ -72,13 +73,14 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
+    print(widget.appUser.emergencyContacts);
+    print(widget.appUser.emergencyMessage);
     try{
         initializeFirebase();
     }catch(e){
       print(e);
     }
     getUserFromHive();
-    getDetails();
     super.initState();
   }
 
@@ -158,6 +160,9 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                   ListTile(
+                    onTap: (){
+                      Navigator.push(context, MaterialPageRoute(builder: (context)=>SettingsPage(widget.appUser)));
+                    },
                     leading: Icon(Icons.settings),
                     title: Text('Settings'),
                   ),
@@ -191,22 +196,6 @@ class _HomePageState extends State<HomePage> {
                     },
                     leading: Icon(Icons.contacts),
                     title: Text('Modify Emergency Contacts'),
-                  ),
-                  ListTile(
-                    onTap: () async {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => DraftMessagePage(widget.appUser)));
-                    },
-                    leading: Icon(Icons.wb_sunny),
-                    trailing: CupertinoSwitch(
-                        value: Theme.of(context).brightness==Brightness.dark,
-                        onChanged: (value){
-                          DynamicTheme.of(context).setBrightness(Theme.of(context).brightness == Brightness.dark? Brightness.light: Brightness.dark);
-                        }
-                    ),
-                    title:Text('Dark theme'),
                   ),
                 ],
               ),
@@ -375,26 +364,6 @@ class _HomePageState extends State<HomePage> {
       print(onError);
     });
     print(_result);
-  }
-
-  void getDetails() async {
-    var contacts = await Hive.openBox('contacts');
-    contactCount = contacts.length;
-    currentMessage = null;
-    var message = await Hive.openBox('message');
-    if (message.length != 0) currentMessage = message.getAt(0);
-//    if (currentMessage != null)
-//      preview = currentMessage +
-//          "\nMy Location is latitude: " +
-//          currPos.latitude.toString() +
-//          " longitude: " +
-//          currPos.longitude.toString();
-//    else
-//      preview = "Help Me" +
-//          "\nMy Location is latitude: " +
-//          currPos.latitude.toString() +
-//          " longitude: " +
-//          currPos.longitude.toString();
   }
   Widget contactsListCarousel(){
     return Padding(
