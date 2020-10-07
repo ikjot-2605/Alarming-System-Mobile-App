@@ -191,10 +191,12 @@ class _RegisterPageState extends State<RegisterPage> {
     return OutlineButton(
       splashColor: Colors.grey,
       onPressed: () {
-        signInWithGoogle().then((result) {
-          if (result != null) {
-
-          }
+        signInWithGoogle().catchError((error) {
+          Flushbar(
+            title: "Error",
+            message: "Please check your internet connection",
+            duration: Duration(seconds: 3),
+          )..show(context);
         });
       },
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
